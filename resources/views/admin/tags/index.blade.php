@@ -5,9 +5,9 @@
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Post</h1>
+        <h1 class="h3 mb-0 text-gray-800">Tags</h1>
 
-        <a href="{{ url('admin/posts/create') }}" class="btn btn-primary btn-sm btn-icon-split">
+        <a href="{{ url('admin/tags/create') }}" class="btn btn-primary btn-sm btn-icon-split">
             <span class="icon text-white-50">
                 <i class="fas fa-plus"></i>
             </span>
@@ -21,37 +21,32 @@
         <div class="col-12">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">List Post</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">List Tag</h6>
                 </div>
                 <div class="card-body">
-
                     @include('admin.partials.flash')
                     <div class="table-responsive">
                         <table class="table select" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Category</th>
-                                    <th>Tag</th>
-                                    <th>Status</th>
+                                    <th>Name</th>
+                                    <th>Slug</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($posts as $post)
+                                @forelse ($tags as $tag)
                                 <tr>
-                                    <td>{{ $post->title }}</td>
-                                    <td>@foreach ($post->categories as $category) {{ $category->name }} @endforeach</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{ $tag->name }}</td>
+                                    <td>{{ $tag->slug }}</td>
                                     <td>
-                                        <a href="{{ url('admin/posts/'. $post->id .'/edit') }}"
+                                        <a href="{{ url('admin/tags/'. $tag->id .'/edit') }}"
                                             class="btn btn-secondary btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
 
                                         {{-- delete --}}
-                                        {!! Form::open(['url' => 'admin/posts/'. $post->id, 'class' =>
+                                        {!! Form::open(['url' => 'admin/tags/'. $tag->id, 'class' =>
                                         'delete',
                                         'style' => 'display:inline-block']) !!}
                                         {!! Form::hidden('_method', 'DELETE') !!}
@@ -74,7 +69,9 @@
 
         </div>
 
+
     </div>
+
 </div>
 
 @endsection

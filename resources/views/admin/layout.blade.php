@@ -17,8 +17,16 @@
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
+    {{-- DataTables --}}
+    <link href="{{ asset('backend/assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="{{ asset('backend/assets/css/sb-admin-2.min.css') }}" rel="stylesheet">
+    @toastr_css
+
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+
 
 </head>
 
@@ -83,7 +91,12 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="{{ route('logout') }}" onclick="event.preventDefault();
+                    document.getElementById('logoutForm').submit();">Logout</a>
+
+                    <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
                 </div>
             </div>
         </div>
@@ -92,19 +105,55 @@
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('backend/assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('backend/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
     <!-- Core plugin JavaScript-->
     <script src="{{ asset('backend/assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('backend/assets/js/sb-admin-2.min.js') }}"></script>
-
     <!-- Page level plugins -->
     <script src="{{ asset('backend/assets/vendor/chart.js/Chart.min.js') }}"></script>
-
     <!-- Page level custom scripts -->
     <script src="{{ asset('backend/assets/js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('backend/assets/js/demo/chart-pie-demo.js') }}"></script>
+    {{-- DataTable --}}
+    <!-- Page level plugins -->
+    <script src="{{ asset('backend/assets/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- Page level custom scripts -->
+    <script src="{{ asset('backend/assets/js/demo/datatables-demo.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+    {{-- My Script --}}
+    {{-- @jquery --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    @toastr_js
+    @toastr_render
+    <script>
+        // delete
+        $(".delete").on("submit", function () {
+            return confirm("Do you want to remove this?");
+        });
+
+        // summernote
+        $('.summernote').summernote({
+            placeholder: 'Create something...',
+            tabsize: 2,
+            height: 400
+        });
+
+        // select2
+        $(document).ready(function() {
+            $('.select2').select2({
+                dropdownAutoWidth: true,
+                placeholder: "Please select...",
+                width: 'auto',
+            });
+            $('.select2').css('width', '100%');
+
+
+            // $('.category').attr("placeholder", "Type a Location").placeholder();
+        });
+
+
+    </script>
 
 </body>
 
