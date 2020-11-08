@@ -23,6 +23,7 @@ Route::get('/home', function () {
     return redirect('/');
 });
 Route::get('/blog', [BlogController::class, 'index']);
+Route::get('/blog/{slug}', [BlogController::class, 'detail']);
 
 // Auth::routes();
 

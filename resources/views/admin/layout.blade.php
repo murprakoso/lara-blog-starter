@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title>Administrator - Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{ asset('backend/assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -21,6 +21,8 @@
     <link href="{{ asset('backend/assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <!-- Custom styles for this template-->
     <link href="{{ asset('backend/assets/css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('backend/assets/css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/dropify.css') }}" rel="stylesheet">
     @toastr_css
 
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
@@ -124,6 +126,8 @@
     {{-- My Script --}}
     {{-- @jquery --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    <script src="{{ asset('js/dropify.js') }}"></script>
     @toastr_js
     @toastr_render
     <script>
@@ -151,6 +155,22 @@
 
             // $('.category').attr("placeholder", "Type a Location").placeholder();
         });
+
+        // Slug
+        $('.title').keyup(function() {
+			var title = $(this).val().toLowerCase().replace(/[&\/\\#^, +()$~%.'":*?<>{}]/g, '-');
+			$('.slug').val(title);
+		});
+
+        // Dropify
+        $('.dropify').dropify({
+			messages: {
+				// default: 'Drag atau drop untuk memilih gambar',
+				replace: 'Ganti',
+				remove: 'Hapus',
+				error: 'error'
+			}
+		});
 
 
     </script>

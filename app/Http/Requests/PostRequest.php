@@ -27,11 +27,12 @@ class PostRequest extends FormRequest
 
         if ($this->method() == 'PUT') {
             $slug = 'unique:posts,slug,' . $id;
+            $image = 'image|mimes:jpeg,png,jpg,gif|max:4096';
         } else {
             $slug = 'unique:posts,slug';
+            $image = 'required|image|mimes:jpeg,png,jpg,gif|max:4096';
         }
         $title = 'required';
-        $image = 'required|image|mimes:jpeg,png,jpg,gif|max:4096';
         $content = 'required';
 
         return [

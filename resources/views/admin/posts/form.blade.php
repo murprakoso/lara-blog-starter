@@ -39,7 +39,13 @@ $formTitle = !empty($post) ? 'Update' : 'New'
 
                     <div class="form-group">
                         {!! Form::label('title', 'Title') !!}
-                        {!! Form::text('title', null, ['class' => 'form-control', 'placeholder' => 'post title'])
+                        {!! Form::text('title', null, ['class' => 'form-control title', 'placeholder' => 'post title'])
+                        !!}
+                    </div>
+
+                    <div class="form-group">
+                        {!! Form::label('slug', 'Slug') !!}
+                        {!! Form::text('slug', null, ['class' => 'form-control slug', 'placeholder' => 'permalink'])
                         !!}
                     </div>
 
@@ -61,7 +67,9 @@ $formTitle = !empty($post) ? 'Update' : 'New'
 
                     <div class="form-group">
                         {!! Form::label('image', 'Post Image') !!}
-                        {!! Form::file('image', ['class' => 'form-control-file', 'placeholder' => 'post image']) !!}
+                        {!! Form::file('image', ['class' => 'form-control-file dropify', 'placeholder' => 'post image','data-default-file' => (!empty($post->image) ? asset('storage/'.$post->image) : '' )  ]) !!}
+
+                        {{-- <input type="file" name="filefoto" class="dropify" data-height="190" required> --}}
                     </div>
 
                     <div class="form-group">
@@ -73,12 +81,18 @@ $formTitle = !empty($post) ? 'Update' : 'New'
 
                     <div class="form-group">
                         {!! Form::label('tag', 'Tag') !!}
-                        {!! Form::select('tag_id[]', $tags, null, ['class'=>'form-control select2','multiple' => true]);!!}
+                        {!! Form::select('tag_id[]', $tags, $tagIDs, ['class' => 'form-control select2','multiple' => true ]);!!}
+
+                        {{-- <select name="tag_id[]" class="form-control select2" multiple>
+                            @foreach ($tags as $tag)
+                                <option {{ $post->tags()->find($tag->id) ? 'selected':'' }} value="{{ $tag->id }}">{{ $tag->name }}</option>
+                            @endforeach
+                        </select> --}}
                     </div>
 
                     <div class="form-group">
                         {!! Form::label('status', 'Status') !!}
-                        {!! Form::select('status', ['1' => 'Active', '0' => 'Inactive'], null, ['placeholder' => 'Status...','class'=>'form-control']);!!}
+                        {!! Form::select('status', ['1' => 'Active', '0' => 'Inactive'], (!empty($post->published) ? $post->published : isset($post->published)) ? $post->published :'' , ['placeholder' => 'Status...','class'=>'form-control']);!!}
                     </div>
 
                     <button type="submit" class="btn btn-primary">Save</button>

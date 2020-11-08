@@ -7,8 +7,9 @@ use App\Models\Post;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -36,6 +37,7 @@ class PostController extends Controller
         $this->data['categories'] = $categories->toArray();
         $this->data['categoryIDs'] = [];
         $this->data['tags'] = Tag::pluck('name', 'id');
+        $this->data['tagIDs'] = null;
         $this->data['post'] = null;
 
         return view('admin.posts.form', $this->data);
@@ -50,22 +52,25 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         try {
-            //code...
+            //
             $params = $request->except('_token');
-            $params['slug'] = Str::slug($request['title']);
+            // $params['slug'] = Str::slug($request['title']);
+            $params['slug'] = Str::slug($request['slug']);
             $params['author_id'] = Auth::user()->id;
             $params['published'] = $request['status'];
-
+            // Image
             $image = $request->image;
             $imageName = $params['slug'] . '_' . time() . '_';
             $newImage = $imageName . $image->getClientOriginalName();
 
-            $params['image'] = $newImage;
-
+            $folder = Post::UPLOAD_DIR . '/images';
+            $params['image']  = $image->storeAs($folder . '/original', $newImage, 'public');
+            //
             $post = Post::create($params);
-            // dd($newImage);
             if ($post) {
                 $post->categories()->attach($request->category_id);
+                $post->tags()->attach($request->tag_id);
+
                 toastr()->info('Post has been saved.');
             }
             return redirect('admin/posts');
@@ -91,6 +96,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
+     * @param   array   tagIDs -> tagID Selected
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -98,9 +104,13 @@ class PostController extends Controller
     {
         $post =  Post::findOrFail($id);
         $categories = Category::orderBy('name', 'ASC')->get();
+        // $tag = DB::table('post_tags')->where('post_id', $id)->pluck('tag_id');
 
         $this->data['post'] = $post;
+
         $this->data['tags'] = Tag::pluck('name', 'id');
+        $this->data['tagIDs'] = Tag::getTagIdSelected($id);
+
         $this->data['categories'] = $categories->toArray();
         $this->data['categoryIDs'] = $post->categories->pluck('id')->toArray();
 
@@ -114,9 +124,42 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostRequest $request, $id)
     {
-        //
+        try {
+            //
+            $params = $request->except('_token');
+            // $params['slug'] = Str::slug($request['title']);
+            $params['slug'] = Str::slug($request['slug']);
+            $params['author_id'] = Auth::user()->id;
+            $params['published'] = $request['status'];
+            // Image
+            if ($request->hasFile('image')) {
+                $image = $request->image;
+                $imageName = $params['slug'] . '_' . time() . '_';
+                $newImage = $imageName . $image->getClientOriginalName();
+
+                $folder = Post::UPLOAD_DIR . '/images';
+                $params['image']  = $image->storeAs($folder . '/original', $newImage, 'public');
+            }
+            //
+            // $post = Post::where('id', $id)->update($params);
+            $post = Post::findOrFail($id);
+            if ($post->update($params)) {
+                // $post->categories()->attach($request->category_id);
+                // $post->tags()->attach($request->tag_id);
+                Post::find($id)->categories()->sync($request->category_id);
+                Post::find($id)->tags()->sync($request->tag_id);
+
+                toastr()->info('Post has been updated.');
+            }
+            return redirect('admin/posts');
+
+
+            //
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -127,6 +170,17 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $post = Post::findOrFail($id);
+
+            if ($post->delete()) {
+                toastr()->info('Post has been deleted.');
+            }
+            return redirect('admin/posts');
+
+            //
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

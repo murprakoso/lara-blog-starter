@@ -30,21 +30,43 @@
                         <table class="table select" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Title</th>
                                     <th>Category</th>
-                                    <th>Tag</th>
+                                    <th>Tags</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    <th style="min-width: 100px;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($posts as $post)
                                 <tr>
-                                    <td>{{ $post->title }}</td>
-                                    <td>@foreach ($post->categories as $category) {{ $category->name }} @endforeach</td>
-                                    <td></td>
-                                    <td></td>
                                     <td>
+                                        <input type="checkbox" class="checkbox-light">
+                                    </td>
+                                    <td>
+                                        <strong> {{ $post->title }}</strong>
+                                    </td>
+                                    <td>
+                                        @foreach ($post->categories as $category) {{ $category->name }} @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($post->tags as $tag)
+                                        <span class="badge badge-primary">{{ '#'.$tag->name }}</span> @endforeach
+                                    </td>
+                                    <td>
+                                        @if ($post->published == '1')
+                                            <span class="badge badge-success">{{ __('Published') }}</span>
+                                        @else
+                                            <span class="badge badge-secondary">{{ __('Inactive') }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="d-inline-block">
+                                        <a href="{{ url('blog/'. $post->slug) }}" target="_blank"
+                                            class="btn btn-secondary btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
                                         <a href="{{ url('admin/posts/'. $post->id .'/edit') }}"
                                             class="btn btn-secondary btn-sm">
                                             <i class="fas fa-edit"></i>
