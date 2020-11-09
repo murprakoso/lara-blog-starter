@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -27,11 +28,13 @@ class BlogController extends Controller
     public function detail($slug)
     {
         $blog = Post::active()->where('slug', $slug)->first();
+        $categories = Category::all();
 
         if (!$blog) {
             return redirect('blog');
         }
         $this->data['blog'] = $blog;
+        $this->data['categories'] = $categories;
 
         // dd($blog);
         return $this->loadTheme('blogs.detail', $this->data);

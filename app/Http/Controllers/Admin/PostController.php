@@ -11,6 +11,7 @@ use App\Http\Requests\PostRequest;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -129,11 +130,13 @@ class PostController extends Controller
         try {
             //
             $params = $request->except('_token');
-            // $params['slug'] = Str::slug($request['title']);
+
             $params['slug'] = Str::slug($request['slug']);
             $params['author_id'] = Auth::user()->id;
             $params['published'] = $request['status'];
-            // Image
+
+            $post = Post::findOrFail($id);
+            // Image if has file
             if ($request->hasFile('image')) {
                 $image = $request->image;
                 $imageName = $params['slug'] . '_' . time() . '_';
@@ -141,13 +144,12 @@ class PostController extends Controller
 
                 $folder = Post::UPLOAD_DIR . '/images';
                 $params['image']  = $image->storeAs($folder . '/original', $newImage, 'public');
+                Storage::disk('public')->delete($post->image); // unlink img
             }
             //
-            // $post = Post::where('id', $id)->update($params);
-            $post = Post::findOrFail($id);
+
             if ($post->update($params)) {
-                // $post->categories()->attach($request->category_id);
-                // $post->tags()->attach($request->tag_id);
+                // sync on pivot table
                 Post::find($id)->categories()->sync($request->category_id);
                 Post::find($id)->tags()->sync($request->tag_id);
 
@@ -174,6 +176,7 @@ class PostController extends Controller
             $post = Post::findOrFail($id);
 
             if ($post->delete()) {
+                Storage::disk('public')->delete($post->image);
                 toastr()->info('Post has been deleted.');
             }
             return redirect('admin/posts');

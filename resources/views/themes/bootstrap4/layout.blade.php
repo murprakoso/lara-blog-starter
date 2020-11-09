@@ -10,6 +10,9 @@
 
     <title>Modern Business - Start Bootstrap Template</title>
 
+    <meta content=’Deskripsi Blog‘ name=’description‘/>
+    <meta content=’Kata Kunci Blog‘ name=’keywords‘/>
+
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('themes/bootstrap4/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 

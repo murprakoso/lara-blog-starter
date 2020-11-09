@@ -4,7 +4,7 @@
 @section('content')
 <!-- Portfolio Section -->
 <div class="container">
-    <h2 class="mt-3">Portfolio Heading</h2>
+    <h2 class="mt-3">Blog</h2>
 
     <div class="row">
 
